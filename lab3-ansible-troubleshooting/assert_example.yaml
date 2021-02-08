@@ -7,5 +7,16 @@
   gather_facts: yes
 
   tasks:
-    - nxos_facts:
-
+    - name: create new vlan 2002
+      nxos_vlan: 
+        vlan_id: 2002
+        state: present
+    - name: Gather vlan list
+      nxos_facts:
+        gather_subset:
+        - all
+    - debug: var=ansible_net_vlan_list
+    - name: Verify vlan 2002 is created
+      assert:
+        that:
+          - "'2002' in '{{ ansible_net_vlan_list|map('int') }}'"
